@@ -126,11 +126,11 @@ public:
             [](const auto& a, const auto& b){ return a->area() < b->area(); });
     }
 
-    std::shared_ptr<Shape> getLargest() const {
+    const Shape* getLargest() const {
         if (shapes.empty()) return nullptr;
         auto it = std::max_element(shapes.begin(), shapes.end(),
             [](const auto& a, const auto& b){ return a->area() < b->area(); });
-        return nullptr; // can't return unique_ptr as shared; just print it
+        return it->get(); // non-owning raw pointer — caller must not delete
     }
 };
 
@@ -149,6 +149,12 @@ int main() {
     canvas.sortByArea();
     std::cout << "\n=== After Sorting by Area ===" << std::endl;
     canvas.displayStats();
+
+    const Shape* largest = canvas.getLargest();
+    if (largest) {
+        std::cout << "\nLargest shape: ";
+        largest->display();
+    }
 
     return 0;
 }
